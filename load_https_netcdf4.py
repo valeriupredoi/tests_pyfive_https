@@ -10,7 +10,8 @@ from netCDF4 import Dataset
 
 url4 = "https://esgf.ceda.ac.uk/thredds/fileServer/esg_cmip6/CMIP6/AerChemMIP/MOHC/UKESM1-0-LL/ssp370SST-lowNTCF/r1i1p1f2/Amon/cl/gn/latest/cl_Amon_UKESM1-0-LL_ssp370SST-lowNTCF_r1i1p1f2_gn_205001-209912.nc"
 url4nc = "https://esgf.ceda.ac.uk/thredds/fileServer/esg_cmip6/CMIP6/AerChemMIP/MOHC/UKESM1-0-LL/ssp370SST-lowNTCF/r1i1p1f2/Amon/cl/gn/latest/cl_Amon_UKESM1-0-LL_ssp370SST-lowNTCF_r1i1p1f2_gn_205001-209912.nc#mode=bytes"
-url4s3 = "ch330a.pc19790301-bnl.nc"  # 18GB 3400 HDF5 chunks
+# remember to mc cp FILE bryan/bnl
+url4s3 = "cl_Amon_UKESM1-0-LL_ssp370SST-lowNTCF_r1i1p1f2_gn_205001-209912.nc"
 
 def load_file_pyfive(uri):
     fs = fsspec.filesystem('http')
@@ -51,7 +52,7 @@ def load_file_s3(uri):
     ds = pyfive.File(s3file)
     t3=time.time()
     print(f"Dataset loaded from S3 with s3fs and Pyfive: {uri} ({t2-t1:.2},{t3-t2:.2})")
-    sl = ds['UM_m01s16i202_vn1106'][0:100]
+    sl = ds['cl'][0:100]
 
 
 load_file_pyfive(url4)
@@ -59,7 +60,7 @@ print("\n")
 tx = time.time()
 load_file_netCDF4(url4nc)
 ty = time.time()
-print(f"netCDF4 took {ty-tx:.2}s")
+print(f"HTTPSNetCDF4 took {ty-tx:.2}s")
 print("\n")
 tm = time.time()
 load_file_s3(url4s3)
