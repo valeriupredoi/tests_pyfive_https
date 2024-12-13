@@ -12,6 +12,8 @@ url4 = "https://esgf.ceda.ac.uk/thredds/fileServer/esg_cmip6/CMIP6/AerChemMIP/MO
 url4nc = "https://esgf.ceda.ac.uk/thredds/fileServer/esg_cmip6/CMIP6/AerChemMIP/MOHC/UKESM1-0-LL/ssp370SST-lowNTCF/r1i1p1f2/Amon/cl/gn/latest/cl_Amon_UKESM1-0-LL_ssp370SST-lowNTCF_r1i1p1f2_gn_205001-209912.nc#mode=bytes"
 # remember to mc cp FILE bryan/bnl
 url4s3 = "cl_Amon_UKESM1-0-LL_ssp370SST-lowNTCF_r1i1p1f2_gn_205001-209912.nc"
+url4local = "/home/valeriu/cl_Amon_UKESM1-0-LL_ssp370SST-lowNTCF_r1i1p1f2_gn_205001-209912.nc"
+
 
 def load_file_pyfive(uri):
     fs = fsspec.filesystem('http')
@@ -55,6 +57,13 @@ def load_file_s3(uri):
     sl = ds['cl'][0:100]
 
 
+def load_file_local(uri):
+    with Dataset(uri, diskless=True, persist=True) as nc:
+        print(f"Dataset loaded from LOCAL DISK with netCDF4: {uri}")
+        var = nc["cl"][0:100]
+
+
+## execut'em
 load_file_pyfive(url4)
 print("\n")
 tx = time.time()
@@ -65,3 +74,8 @@ print("\n")
 tm = time.time()
 load_file_s3(url4s3)
 print(f"S3Pyfive took {time.time()-tm:.2}s")
+print("\n")
+txx = time.time()
+load_file_local(url4local)
+tyy = time.time()
+print(f"LOCAL-NetCDF4 took {tyy-txx:.2}s")
